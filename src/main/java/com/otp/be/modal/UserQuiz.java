@@ -37,6 +37,9 @@ public class UserQuiz {
 	
 	@Column(name="attempted_by", nullable=true)
 	private int attemptedBy;
+	
+	@Column(name="assigned_to")
+	private String assignedTo;
 
 	public int getUserQuizId() {
 		return userQuizId;
@@ -84,6 +87,14 @@ public class UserQuiz {
 
 	public void setAttemptedBy(int attemptedBy) {
 		this.attemptedBy = attemptedBy;
+	}
+
+	public String getAssignedTo() {
+		return assignedTo;
+	}
+
+	public void setAssignedTo(String assignedTo) {
+		this.assignedTo = assignedTo;
 	}
 	
 	

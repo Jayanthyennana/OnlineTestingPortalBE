@@ -115,4 +115,30 @@ public class ApplicationController {
 		return userQuizService.saveUserQuiz(userQuiz);
 	}
 	
+	@GetMapping("/getQuizzesByUserId/{userId}")
+	public List<Object> getQuizzesByUserId(@PathVariable int userId) {
+		List<Quiz> quizDetails = quizService.getQuizDetails();
+		List<UserQuiz> userQuizDetails = userQuizService.getUserQuizDetails();
+		
+		List<UserQuiz> filteredUserQuizList = userQuizDetails.stream().filter(userQuiz -> (userQuiz.getCreatedBy() == userId)).collect(Collectors.toList());
+		List<Object> filteredQuizByUserIdList = new ArrayList<Object>();
+		for (int i = 0; i < filteredUserQuizList.size(); i++) {
+			Map<String, Object> resQuizObject = new HashMap<>();
+			for (int j = 0; j < quizDetails.size(); j++) {
+				if (filteredUserQuizList.get(i).getQuizId() == quizDetails.get(j).getQuizId()) {
+					resQuizObject.put("quizId", filteredUserQuizList.get(i).getQuizId());
+					resQuizObject.put("createdAt", filteredUserQuizList.get(i).getCreatedAt());
+					resQuizObject.put("userId", filteredUserQuizList.get(i).getCreatedBy());
+					resQuizObject.put("quizDesc", quizDetails.get(j).getDescription());
+					resQuizObject.put("passcode", quizDetails.get(j).getPasscode());
+					resQuizObject.put("availableFrom", quizDetails.get(j).getAvailableFrom());
+					resQuizObject.put("availableTill", quizDetails.get(j).getAvailableTill());
+					resQuizObject.put("totalMarks", quizDetails.get(j).getTotalMarks());
+				}
+			}
+			filteredQuizByUserIdList.add(resQuizObject);
+		}
+		return filteredQuizByUserIdList;
+	}
+	
 }
