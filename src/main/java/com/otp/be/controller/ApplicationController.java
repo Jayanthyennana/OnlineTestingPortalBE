@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.otp.be.modal.Questions;
 import com.otp.be.modal.Quiz;
+import com.otp.be.modal.Score;
 import com.otp.be.modal.User;
 import com.otp.be.modal.UserQuiz;
 import com.otp.be.services.QuestionsService;
 import com.otp.be.services.QuizService;
+import com.otp.be.services.ScoreService;
 import com.otp.be.services.UserQuizService;
 import com.otp.be.services.UserService;
 
@@ -38,6 +40,9 @@ public class ApplicationController {
 	
 	@Autowired
 	private UserQuizService userQuizService;
+	
+	@Autowired
+	private ScoreService scoreService;
 	
 	@GetMapping("/users")
 	public List<User> getUserDetails() {
@@ -129,7 +134,7 @@ public class ApplicationController {
 					resQuizObject.put("quizId", filteredUserQuizList.get(i).getQuizId());
 					resQuizObject.put("createdAt", filteredUserQuizList.get(i).getCreatedAt());
 					resQuizObject.put("userId", filteredUserQuizList.get(i).getCreatedBy());
-					resQuizObject.put("quizDesc", quizDetails.get(j).getDescription());
+					resQuizObject.put("description", quizDetails.get(j).getDescription());
 					resQuizObject.put("passcode", quizDetails.get(j).getPasscode());
 					resQuizObject.put("availableFrom", quizDetails.get(j).getAvailableFrom());
 					resQuizObject.put("availableTill", quizDetails.get(j).getAvailableTill());
@@ -141,4 +146,30 @@ public class ApplicationController {
 		return filteredQuizByUserIdList;
 	}
 	
+	@GetMapping("/getQuestionsByQuizId/{quizId}")
+	public List<Questions> getQuestionsByQuizId(@PathVariable int quizId) {
+		List<Questions> questionsList = questionsService.getQuestionsDetails();
+		List<Questions> filteredQuestionsList = questionsList.stream().filter(question -> (question.getQuizId() == quizId)).collect(Collectors.toList());
+		return filteredQuestionsList;
+	}
+	
+	
+	@GetMapping("/scores")
+	public List<Score> getScoreDetails() {
+		return scoreService.getScoreDetails();
+	}
+	
+	@GetMapping("/scores/{scoreId}")
+	public Score getScoreById(@PathVariable int scoreId) {
+		return scoreService.getScoreById(scoreId);
+	}
+	
+	@PostMapping("/saveScore")
+	public Score saveScore(@RequestBody Score score) {
+		List<Score> scoreDetails = scoreService.getScoreDetails();
+		List<Integer> idList = scoreDetails.stream().map(Score::getScoreId).collect(Collectors.toList());
+		int maxId = (idList.size() > 0) ? Collections.max(idList) : 0;
+		score.setScoreId(maxId+1);
+		return scoreService.saveScore(score);
+	}
 }
