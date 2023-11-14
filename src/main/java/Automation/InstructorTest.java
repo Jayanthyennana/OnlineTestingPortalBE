@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -74,7 +75,7 @@ public class InstructorTest {
         Thread.sleep(100L);
         submitButton.click();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(100));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1000));
         wait.until(ExpectedConditions.alertIsPresent());
 
         Alert alert = driver.switchTo().alert();
@@ -85,7 +86,10 @@ public class InstructorTest {
     }
 
     @Test(dependsOnMethods = {"testOpenSignUpPage", "testUserRegistrationInstructor"})
-    public void testValidLogin() {
+    public void testValidLogin() throws InterruptedException {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0, 0);");
+        Thread.sleep(1000);
         String email = "yash@gmail.com";
         String password = "1234";
 
@@ -153,9 +157,52 @@ public class InstructorTest {
         }
 
 
-        WebElement createQuizSubmitButton = driver.findElement(By.xpath("//*[@id=\"collapse-text\"]/button"));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", createQuizSubmitButton);
-        createQuizSubmitButton.click();
+        WebDriverWait waitForQuizSubmitButton = new WebDriverWait(driver, Duration.ofMillis(1000));
+        WebElement quizSubmitButton = waitForQuizSubmitButton.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"collapse-text\"]/button")));
+//        WebElement createQuizSubmitButton = driver.findElement(By.xpath("//*[@id=\"collapse-text\"]/button"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", quizSubmitButton);
+        Thread.sleep(1000);
+        quizSubmitButton.click();
 
+
+
+        Thread.sleep(1000);
+        WebElement successMessage = driver.findElement(By.xpath("//*[@id=\"collapse-text\"]/p"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", successMessage);
+
+        Assert.assertEquals(successMessage.getText(), "Quiz created!");
+
+    }
+
+    @Test(dependsOnMethods = {"testOpenSignUpPage", "testUserRegistrationInstructor", "testValidLogin", "testCreateQuiz"})
+    public void testAddQuestions() throws InterruptedException {
+        WebElement addQuestionsButton = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/div/div[1]/div/div/button"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addQuestionsButton);
+        Thread.sleep(1000);
+        addQuestionsButton.click();
+
+        WebElement description = driver.findElement(By.xpath("//*[@id=\"question\"]"));
+        WebElement optionA = driver.findElement(By.xpath("//*[@id=\"choice1\"]"));
+        WebElement optionB = driver.findElement(By.xpath("//*[@id=\"choice2\"]"));
+        WebElement optionC = driver.findElement(By.xpath("//*[@id=\"choice3\"]"));
+        WebElement optionD = driver.findElement(By.xpath("//*[@id=\"choice4\"]"));
+
+
+        WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/form/button"));
+
+        description.sendKeys("Is this from selenium Testing ?");
+        optionA.sendKeys("Yes");
+        optionB.sendKeys("No");
+        optionC.sendKeys("How Would I Know ?");
+        optionD.sendKeys("I don't know");
+
+        submitButton.click();
+
+
+    }
+
+    @AfterSuite
+    public void terminate() {
+        driver.quit();
     }
 }

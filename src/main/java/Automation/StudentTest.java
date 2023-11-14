@@ -86,7 +86,10 @@ public class StudentTest {
 
 
     @Test(dependsOnMethods = {"testOpenSignUpPage", "testUserRegistrationStudent"})
-    public void testLoginStudent() {
+    public void testLoginStudent() throws InterruptedException {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0, 0);");
+        Thread.sleep(1000);
         String email = "rakshith@gmail.com";
         String password = "1234";
 
@@ -104,6 +107,19 @@ public class StudentTest {
         WebDriverWait waitForHomePage = new WebDriverWait(driver, Duration.ofMillis(100));
         WebElement verifyLogin = waitForHomePage.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"root\"]/div/div/h1")));
         Assert.assertEquals(verifyLogin.getText(), "Welcome Rakshith!");
+    }
+
+    @Test(dependsOnMethods = {"testOpenSignUpPage", "testUserRegistrationStudent", "testLoginStudent"})
+    public void takeTest() throws InterruptedException {
+//        WebElement startQuizButton = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/div/div[1]/div/div/button"));
+//        Thread.sleep(1000);
+//        startQuizButton.click();
+//
+//        WebElement selectOption = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/div/div/div/div/span[1]/div"));
+//        selectOption.click();
+//
+//        WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/button"));
+//        submitButton.click();
     }
 
 
