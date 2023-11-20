@@ -30,7 +30,7 @@ public class InstructorTest {
 
     @Test
     public void testOpenSignUpPage() {
-        WebElement signUpButton = driver.findElement(By.xpath("//*[@id=\"basic-navbar-nav\"]/div/a[2]"));
+        WebElement signUpButton = driver.findElement(By.xpath("//*[@id=\"basic-navbar-nav\"]/div/a"));
         signUpButton.click();
 
         WebDriverWait waitForSignUpPage = new WebDriverWait(driver, Duration.ofMillis(1000));
@@ -45,7 +45,7 @@ public class InstructorTest {
         String instructorLastName = "Varalabalaji";
         String instructorPhoneNumber = "999999999";
         String instructorEmail = "yash@gmail.com";
-        String instructorPassword = "1234";
+        String instructorPassword = "Test@1234";
 
         WebElement firstNameElement = driver.findElement(By.xpath("//*[@id=\"signupform.ControlInput1\"]"));
         WebElement lastNameElement = driver.findElement(By.xpath("//*[@id=\"signupform.ControlInput2\"]"));
@@ -69,11 +69,13 @@ public class InstructorTest {
         passwordReEnterElement.sendKeys(instructorPassword);
 
 
-        WebDriverWait waitForSubmitButton = new WebDriverWait(driver, Duration.ofMillis(100));
-        WebElement submitButton = waitForSubmitButton.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"root\"]/div/div/div/div/div/div/div[2]/form/button")));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitButton);
+        WebDriverWait waitForSubmitButton = new WebDriverWait(driver, Duration.ofMillis(1000));
+        Thread.sleep(1000);
+        WebElement subButton = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/div/div/div/div/div[2]/form/button"));
+//        WebElement submitButton = waitForSubmitButton.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"root\"]/div/div/div/div/div/div/div[2]/form/button")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", subButton);
         Thread.sleep(100L);
-        submitButton.click();
+        subButton.click();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1000));
         wait.until(ExpectedConditions.alertIsPresent());
@@ -91,7 +93,7 @@ public class InstructorTest {
         js.executeScript("window.scrollTo(0, 0);");
         Thread.sleep(1000);
         String email = "yash@gmail.com";
-        String password = "1234";
+        String password = "Test@1234";
 
         WebElement userNameElement = driver.findElement(By.xpath("//*[@id=\"formBasicEmail\"]"));
         WebElement passwordElement = driver.findElement(By.xpath("//*[@id=\"formBasicPassword\"]"));
@@ -105,8 +107,8 @@ public class InstructorTest {
 
 
         WebDriverWait waitForHomePage = new WebDriverWait(driver, Duration.ofMillis(100));
-        WebElement verifyLogin = waitForHomePage.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"root\"]/div/div/h1")));
-        Assert.assertEquals(verifyLogin.getText(), "Welcome Yashwith!");
+        WebElement verifyLogin = waitForHomePage.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"basic-navbar-nav\"]/div/div/p")));
+        Assert.assertEquals(verifyLogin.getText(), "Yashwith");
     }
 
     @Test(dependsOnMethods = {"testOpenSignUpPage", "testUserRegistrationInstructor", "testValidLogin"})
